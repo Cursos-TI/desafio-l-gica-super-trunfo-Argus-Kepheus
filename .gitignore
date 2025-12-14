@@ -1,0 +1,10 @@
+# Arquivos executáveis
+bin/*.out
+
+# Arquivos de objeto
+*.o
+*.obj
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
