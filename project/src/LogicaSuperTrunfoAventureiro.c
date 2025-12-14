@@ -15,6 +15,7 @@
 #define TOTAL_CARTAS 32
 #define CARTAS_PREENCHIDAS 30
 #define CARTAS_USUARIO 2
+#define LINHA_SEPARADORA "================================================================================\n"
 
 // Enums para melhor legibilidade e manutenção
 typedef enum {
@@ -101,6 +102,7 @@ void ler_dados_carta(Carta *carta);
 void exibir_cabecalho(void);
 void exibir_tabela(const Carta cartas[]);
 void exibir_opcoes_cartas(const Carta cartas[]);
+void imprimir_linha_separadora(char c, int tamanho);
 int obter_opcao(int min, int max, const char *prompt);
 int obter_modalidade(void);
 int obter_atributo(void);
@@ -133,9 +135,10 @@ int main(void) {
     // Exibição e comparação
     exibir_tabela(cartas);
     
-    printf("\n" "=" "=".repeat(100) "\n");
+    printf("\n");
+    imprimir_linha_separadora('=', 100);
     printf("                                    SISTEMA DE COMPARAÇÃO\n");
-    printf("=" "=".repeat(100) "\n");
+    imprimir_linha_separadora('=', 100);
     
     Modalidade modalidade = obter_modalidade();
     int parametro = 0;
@@ -156,10 +159,17 @@ int main(void) {
 // IMPLEMENTAÇÃO DAS FUNÇÕES
 //==============================================================================
 
+void imprimir_linha_separadora(char c, int tamanho) {
+    for (int i = 0; i < tamanho; i++) {
+        putchar(c);
+    }
+    putchar('\n');
+}
+
 void exibir_cabecalho(void) {
-    printf("=" "=".repeat(100) "\n");
-    printf("                    BEM-VINDO AO SUPER TRUNFO - PAÍSES\n");
-    printf("=" "=".repeat(100) "\n");
+    imprimir_linha_separadora('=', 100);
+    printf("                                 BEM-VINDO AO SUPER TRUNFO - PAÍSES\n");
+    imprimir_linha_separadora('=', 100);
     printf("Sistema com %d cartas (%d pré-preenchidas + %d do usuário)\n\n",
            TOTAL_CARTAS, CARTAS_PREENCHIDAS, CARTAS_USUARIO);
 }
@@ -178,6 +188,15 @@ void inicializar_cartas(Carta cartas[]) {
             cartas[i].pib = dados_iniciais.pib[i];
             cartas[i].pontos_turisticos = dados_iniciais.pontos[i];
             calcular_propriedades(&cartas[i]);
+        } else {
+            // Inicializar valores vazios para cartas do usuário
+            cartas[i].populacao = 0;
+            cartas[i].area = 0;
+            cartas[i].pib = 0;
+            cartas[i].pontos_turisticos = 0;
+            cartas[i].densidade = 0;
+            cartas[i].pib_per_capita = 0;
+            cartas[i].super_poder = 0;
         }
     }
 }
@@ -236,23 +255,24 @@ int ler_numero_int(const char *prompt, const char *erro, int min) {
 void ler_dados_carta(Carta *carta) {
     carta->populacao = ler_populacao();
     carta->area = ler_numero_float("Digite a área (km²): ", 
-                                   "ERRO: A área deve ser maior que zero!", 0.01);
+                                   "ERRO: A área deve ser maior que zero!", 0.01f);
     carta->pib = ler_numero_float("Digite o PIB (em bilhões): ",
-                                  "ERRO: O PIB deve ser positivo!", 0.0);
+                                  "ERRO: O PIB deve ser positivo!", 0.0f);
     carta->pontos_turisticos = ler_numero_int("Digite o número de pontos turísticos: ",
                                               "ERRO: Número deve ser positivo!", 0);
 }
 
 void exibir_tabela(const Carta cartas[]) {
-    printf("\n" "=" "=".repeat(100) "\n");
+    printf("\n");
+    imprimir_linha_separadora('=', 100);
     printf("                          TODAS AS CARTAS - FORMATO TABULAR\n");
-    printf("=" "=".repeat(100) "\n");
+    imprimir_linha_separadora('=', 100);
     
     for (int estado = 0; estado < NUM_ESTADOS; estado++) {
         printf("\n====== ESTADO %c ======\n", 'A' + estado);
         printf("%-5s %-12s %-10s %-12s %-8s %-12s %-12s\n",
                "Carta", "População", "Área", "PIB", "Pontos", "Densidade", "SuperPoder");
-        printf("-" "-".repeat(80) "\n");
+        imprimir_linha_separadora('-', 80);
         
         for (int i = 0; i < CIDADES_POR_ESTADO; i++) {
             const Carta *c = &cartas[estado * CIDADES_POR_ESTADO + i];
